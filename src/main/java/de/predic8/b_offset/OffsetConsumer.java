@@ -28,18 +28,22 @@ public class OffsetConsumer {
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 
         consumer.subscribe( singletonList("produktion"), new OffsetBeginningRebalanceListener(consumer, "produktion"));
-
-        while(true) {
+        long t1 = System.currentTimeMillis();
+        int i = 0;
+        while(i<1_000_000) {
 
             ConsumerRecords<String, String> records = consumer.poll( ofSeconds(1));
             if (records.count() == 0)
                 continue;
 
-            System.out.println(" Count: " + records.count());
+            //System.out.println(" Count: " + records.count());
 
-            for (ConsumerRecord<String, String> record : records)
-                System.out.printf("offset= %d, key= %s, value= %s\n", record.offset(), record.key(), record.value());
+            for (ConsumerRecord<String, String> record : records) i++;
+                //System.out.printf("offset= %d, key= %s, value= %s\n", record.offset(), record.key(), record.value());
 
         }
+
+        System.out.println("DONE!");
+        System.out.println("Zeit: " + ((System.currentTimeMillis() - t1)/1000f) + " Sek.");
     }
 }
